@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.*;
 import javax.validation.Valid;
@@ -87,13 +88,35 @@ public class LoginController {
         return "redirect:/";
     }
 
+    @PostMapping("/login")
+    public String loginV4(@Valid @ModelAttribute LoginForm form, BindingResult bindingResult,
+                          @RequestParam(defaultValue = "/") String redirectUrl,
+                          HttpServletRequest request){
+
+        if(bindingResult.hasErrors()){
+            return "login/loginForm";
+        }
+
+        Member loginMember = loginService.Login(form.getLoginId(),form.getPassword());
+
+        if(loginMember == null){
+            bindingResult.reject("loginFail","아이디 또는 비밀번호가 맞지 않습니다.");
+            return "/login/loginForm";
+        }
+
+        HttpSession session = request.getSession();
+        session.setAttribute(SessionConst.LOGIN_MEMBER,loginMember);
+        return "redirect:" + redirectUrl;
+    }
+
+
     //@PostMapping("/logout")
     public String logout(HttpServletResponse response){
         expireCooke(response,"memberId");
         return "redirect:/";
     }
 
-    @PostMapping("/logout")
+    //@PostMapping("/logout")
     public String logoutV2(HttpServletRequest request){
         sessionManager.expire(request);
         return "redirect:/";
