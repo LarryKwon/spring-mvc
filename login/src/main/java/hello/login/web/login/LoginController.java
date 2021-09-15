@@ -68,7 +68,7 @@ public class LoginController {
         return "redirect:/";
     }
 
-    @PostMapping("/login")
+    //@PostMapping("/login")
     public String loginV3(@Valid @ModelAttribute LoginForm form, BindingResult bindingResult,
                           HttpServletRequest request){
 
@@ -90,7 +90,7 @@ public class LoginController {
 
     @PostMapping("/login")
     public String loginV4(@Valid @ModelAttribute LoginForm form, BindingResult bindingResult,
-                          @RequestParam(defaultValue = "/") String redirectUrl,
+                          @RequestParam(defaultValue = "/") String redirectURL,
                           HttpServletRequest request){
 
         if(bindingResult.hasErrors()){
@@ -106,7 +106,7 @@ public class LoginController {
 
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_MEMBER,loginMember);
-        return "redirect:" + redirectUrl;
+        return "redirect:" + redirectURL;
     }
 
 
